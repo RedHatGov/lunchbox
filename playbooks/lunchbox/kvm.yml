@@ -1,0 +1,47 @@
+---
+- name: Play to copy local pub key to kvm host
+  hosts: kvm
+  gather_facts: no
+  roles:
+    - RedHatGov.copy_local_pub_key
+
+- name: Play to deploy kvm host
+  hosts: kvm
+  become: true
+  tasks:
+    - name: Register to RHSM
+      vars:
+        rhsm_consumer_name: "{{ kvm_hostname_full }}"
+        rhsm_repos: "{{ kvm_repos }}"
+      include_role:
+        name: RedHatGov.rhsm
+      when: register_rhn
+
+    - name: Unregister system from RHN
+      include_role:
+        name: RedHatGov.rhsm
+        tasks_from: unregister
+      when: not register_rhn
+
+    - name: enable the needed rhel repositories
+      yum_repository:
+        name: "{{ item }}"
+        description: "{{ item }}"
+        baseurl: "http://{{ content_public_ip }}/repos/{{ item }}"
+        gpgcheck: no
+        enabled: yes
+        file: rhn-local
+        state: present
+      with_items:
+        - "{{ kvm_repos }}"
+      when: not register_rhn
+
+    - name: Deploy kvm
+      include_role:
+        name: RedHatGov.kvm
+
+    - name: fetch public key from KVM host for use later
+      fetch:
+        src: /root/.ssh/id_rsa.pub
+        dest: "{{ playbook_dir }}/files/kvm_root_id_rsa.pub"
+        flat: yes
