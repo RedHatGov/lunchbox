@@ -1,0 +1,16 @@
+parameter_defaults:
+  CloudName: 192.168.25.254
+  ControlPlaneStaticRoutes: []
+  Debug: true
+  DeploymentUser: root
+  DnsServers:
+    - 192.0.2.1
+  DockerInsecureRegistryAddress:
+    - 192.168.25.254:8787
+  NeutronPublicInterface: eth1
+  NeutronDnsDomain: localdomain
+  NeutronBridgeMappings: datacentre:br-ctlplane
+  NeutronPhysicalBridge: br-ctlplane
+  StandaloneEnableRoutedNetworks: false
+  StandaloneHomeDir: /root
+  StandaloneLocalMtu: 1500

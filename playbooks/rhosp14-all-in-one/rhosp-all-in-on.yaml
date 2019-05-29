@@ -1,0 +1,32 @@
+---
+- hosts: rhosp
+  remote_user: root
+  tasks:
+  - name: Configure repos
+    rhsm_repository:
+      name: "{{ item }}"
+    with_items:
+    - rhel-7-server-rpms
+    - rhel-7-server-optional-rpms
+    - rhel-7-server-extras-rpms
+    - rhel-ha-for-rhel-7-server-rpms
+    - rhel-7-server-openstack-14-rpms
+  - name: Install TripleO Python-based client
+    yum:
+      name: python-tripleoclient
+      state: present
+  - name: Create containers-prepare-parameters.yaml file
+    command: openstack tripleo container image prepare default --output-env-file $HOME/containers-prepare-parameters.yaml
+    register: containers-prepare-parameters
+  - name: Copy over standalone_parameters.yaml
+    copy:
+      src: files/standalone_parameters.yaml
+      dest: /root/standalone_parameters.yaml
+      owner: root
+      group: root
+      mode: 0644
+  - name: Install OpenStack all-in-one
+    command: openstack tripleo deploy --templates --local-ip=192.168.25.254/24 -e /usr/share/openstack-tripleo-heat-templates/environments/standalone.yaml -r /usr/share/openstack-tripleo-heat-templates/roles/Standalone.yaml -e $HOME/containers-prepare-parameters.yaml -e $HOME/standalone_parameters.yaml --output-dir $HOME --standalone
+    register: openstack_install_results
+
+
