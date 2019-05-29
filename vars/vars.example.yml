@@ -1,0 +1,40 @@
+#Global
+use_public_dns: true
+domain: example.com
+dns_server_local: 192.0.2.1
+dns_server_public: 8.8.8.8
+ntp_server: time.nist.gov
+git_repo: https://github.com/RedHatGov/lunchbox
+
+versions:
+  rhosp: 13
+  ceph: 3
+  satellite: 6.3
+  ocp: 3.11
+  cfme: 5.9
+  ansible: 2.6
+
+networks:
+  external:
+    name: external
+    cidr: 192.0.2.0/24
+    defroute: true
+    gateway: 192.0.2.1
+    vlan: 1
+    dhcpStart: 192.0.2.40
+    dhcpEnd: 192.0.2.199
+
+register_rhn: true
+rhsm_username: rhnuser
+rhsm_password: p@ssw0rd
+rhsm_pool: ........
+
+#KVM
+kvm_hostname_full: kvm.{{ domain }}
+kvm_public_ip: 192.0.2.254
+kvm_ssh_user: root
+kvm_ssh_pwd: redhat
+kvm_repos:
+  - rhel-7-server-rpms
+  - rhel-7-server-extras-rpms
+  - rhel-7-server-rh-common-rpms
