@@ -36,6 +36,27 @@
         - "{{ kvm_repos }}"
       when: not register_rhn
 
+    - name: copy eno1
+      template:
+        src: ifcfg-eno1.j2
+        dest: /etc/sysconfig/network-scripts/ifcfg-eno1
+        owner: root
+        group: root
+        mode: '755'
+
+    - name: copy bridge br1
+      template:
+        src: ifcfg-br1.j2
+        dest: /etc/sysconfig/network-scripts/ifcfg-br1
+        owner: root
+        group: root
+        mode: '755'
+
+    - name: restart networking
+      service:
+        name: network
+        state: restarted
+
     - name: Deploy kvm
       include_role:
         name: RedHatGov.kvm
