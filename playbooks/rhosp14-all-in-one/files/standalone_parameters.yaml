@@ -1,13 +1,13 @@
 parameter_defaults:
-  CloudName: 192.168.25.254
+  CloudName: {{ lunchbox_prov_ip }}
   ControlPlaneStaticRoutes: []
   Debug: true
   DeploymentUser: root
   DnsServers:
-    - 192.0.2.1
+    - {{ lunchbox_dns }}
   DockerInsecureRegistryAddress:
-    - 192.168.25.254:8787
-  NeutronPublicInterface: eth1
+    - {{ lunchbox_prov_ip }}:8787
+  NeutronPublicInterface: {{ lunchbox_prov_iface }}
   NeutronDnsDomain: localdomain
   NeutronBridgeMappings: datacentre:br-ctlplane
   NeutronPhysicalBridge: br-ctlplane
