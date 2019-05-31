@@ -1,0 +1,84 @@
+---
+- name: install rpms
+  yum:
+    name: ['cockpit-ovirt-dashboard', 'rhvm-appliance', 'ovirt-hosted-engine-setup', 'glusterfs-server', 'vdsm-gluster', 'gluster-ansible-roles',
+'ansible', 'ovirt-ansible-hosted-engine-setup', 'ovirt-ansible-repositories', 'ovirt-ansible-engine-setup']
+    state: latest
+#  with_items:
+#    - cockpit-ovirt-dashboard
+#    - rhvm-appliance
+#    - ovirt-hosted-engine-setup
+#    - glusterfs-server
+#    - vdsm-gluster
+#    - gluster-ansible-roles
+#    - ansible
+#    - ovirt-ansible-hosted-engine-setup
+#    - ovirt-ansible-repositories
+#    - ovirt-ansible-engine-setup
+  tags: prep
+
+- name: Gather current partition info
+  parted:
+    device: /dev/nvme0n1
+    state: info
+    unit: KiB
+  register: parted_out
+  tags: partitions
+
+- name: Check for at least 100 GiB of free space
+  assert:
+    that: "{{ (parted_out.disk.size - parted_out.partitions[-1].end) > (100.0 * 1024.0 * 1024.0) }}"
+    fail_msg: >
+      "There must be at least 100 GiB of available space on the disk. Found
+      {{ ((parted_out.disk.size - parted_out.partitions[-1].end) / (1024.0 * 1024.0)) |
+      round(1,'common') }} GiB"
+  tags: prep
+
+- name: Create engine partition
+  shell: |
+    echo -e "n\n\n\n+76804M\nw\n" | fdisk /dev/nvme0n1
+    partprobe
+  args:
+    executable: /bin/bash
+  register: fdisk_out
+  failed_when: "'Created partition' not in fdisk_out.stdout"
+  tags: prep
+
+- name: Create vmstore partition
+  shell: |
+    echo -e "n\n\n\n\nw\n" | fdisk /dev/nvme0n1
+    partprobe
+  args:
+    executable: /bin/bash
+  register: fdisk_out
+  failed_when: "'Created partition' not in fdisk_out.stdout"
+  tags: prep
+
+- name: enable cockpit
+  systemd:
+    name: cockpit
+    state: started
+    enabled: yes
+  tags: prep
+
+- name: Configure firewalld
+  firewalld:
+    service: cockpit
+    permanent: true
+    immediate: yes
+    state: enabled
+  tags: prep
+
+- name: template gluster-inventory
+  template:
+    src: gluster_inventory.yml.j2
+    dest: /etc/ansible/roles/gluster.ansible/playbooks/hc-ansible-deployment/gluster_inventory.yml
+    mode: 644
+  tags: prep
+
+- name: template he_gluster_vars.json
+  template:
+    src: he_gluster_vars.json.j2
+    dest: /etc/ansible/roles/gluster.ansible/playbooks/hc-ansible-deployment/he_gluster_vars.json
+    mode: 644
+  tags: prep

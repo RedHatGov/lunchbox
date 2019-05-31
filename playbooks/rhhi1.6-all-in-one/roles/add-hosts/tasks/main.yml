@@ -1,0 +1,28 @@
+---
+- name: Login to RHV
+  ovirt_auth:
+    url: https://{{rhvm_fqdn}}/ovirt-engine/api
+    insecure: yes
+    username: admin@internal
+    password: "{{ adminPassword }}"
+
+- name: add hosts to cluster
+  ovirt_hosts:
+    auth: "{{ ovirt_auth }}"
+    cluster: "{{ clusterName }}"
+    name: "{{item}}"
+    address: "{{item}}"
+    password: "{{adminPassword}}"
+    hosted_engine: deploy
+  with_items:
+    - "{{node2_fqdn}}"
+    - "{{node3_fqdn}}"
+
+- name: sleep for 120 seconds and continue with play
+  wait_for: timeout=120
+  delegate_to: localhost
+
+- name: Cleanup RHV auth token
+  ovirt_auth:
+    ovirt_auth: "{{ ovirt_auth }}"
+    state: absent

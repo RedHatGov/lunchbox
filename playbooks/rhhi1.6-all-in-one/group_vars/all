@@ -1,0 +1,36 @@
+---
+#used by 'register' role
+activation_key: <>
+rhn_org_id: <>
+pool_ID: <>
+repo_list:
+#  - rhel-7-server-rhvh-4-rpms  #used for rhvh image installs
+  - rhel-7-server-rpms
+  - rhel-7-server-rhv-4-mgmt-agent-rpms
+  - rhel-7-server-ansible-2-rpms
+  - rh-gluster-3-for-rhel-7-server-rpms
+
+#used by gdeploy.conf, he-answers.cfg, and roles
+node1_fqdn: rhvh.rnelson-test.com
+node1_gluster_fqdn: rhvh.rnelson-test.com
+node1_gluster_ip: 192.0.2.253
+node_interface_dev_name: eno2
+# cluster_nodes: rhvh.rnelson-test.com   # may not be necessary
+
+
+#used by he-answers.cfg and roles
+rhvm_fqdn: rhvm.rnelson-demo.com
+rhvm_bridgeName: ovirtmgmt
+rhvm_bridgeIf: eno1
+rhvm_gateway: 192.168.1.1
+rhvm_cloudinitVMStaticCIDR: 192.168.1.15/24
+rhvm_DNS: 192.168.1.1
+rhvm_cloudinitVMTZ: America/New_York
+rhvm_MACAddr: 00:16:3e:74:bb:ac
+rhvm_vmMemSizeMB: 8192
+rhvm_vmVCpus: 2
+rhvm_DomainName: rnelson-test.com
+rhvm_cloudinitRootPwd: RedHat1!
+clusterName: Default
+adminPassword: RedHat1!
+storageDatacenterName: hosted_datacenter

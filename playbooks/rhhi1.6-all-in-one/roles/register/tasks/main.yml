@@ -1,0 +1,19 @@
+---
+- name: Register
+  command: subscription-manager register --activationkey={{activation_key}} --org={{rhn_org_id}}
+  ignore_errors: yes #Added this because I'm using the Employee SKU, and the auto attach may fail
+  tags: register
+
+- name: Attach
+  command: subscription-manager attach --pool={{pool_ID}}
+  tags: register
+
+- name: Disable All and Enable Specific Repositories
+  block:
+  - set_fact:
+      repos: "{{ repo_list | join(' --enable=') }}"
+  - debug:
+      var: repos
+  - name: Enable repos for RHEL7
+    command: subscription-manager repos --disable="*" --enable={{ repos }}
+  tags: register

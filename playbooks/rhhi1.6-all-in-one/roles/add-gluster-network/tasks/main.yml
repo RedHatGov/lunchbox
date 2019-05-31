@@ -1,0 +1,73 @@
+---
+- name: Login to RHV
+  ovirt_auth:
+    url: https://{{rhvm_fqdn}}/ovirt-engine/api
+    insecure: yes
+    username: admin@internal
+    password: "{{ adminPassword }}"
+  tags:
+    - network
+
+- name: add gluster network
+  ovirt_networks:
+    auth: "{{ ovirt_auth }}"
+    data_center: Default
+    name: gluster
+    vm_network: false
+    clusters:
+    - name: "{{clusterName}}"
+      gluster: true
+      migration: true
+      required: false
+    state: present
+  tags:
+    - network
+
+- name: Add gluster network to node1
+  ovirt_host_networks:
+    auth: "{{ ovirt_auth }}"
+    name: "{{node1_fqdn}}"
+    interface: "{{node_interface_dev_name}}"
+    networks:
+      - name: gluster
+        boot_protocol: static
+        address: "{{node1_gluster_ip}}"
+        netmask: 255.255.255.0
+    save: true
+  tags:
+    - network
+
+- name: Add gluster network to node2
+  ovirt_host_networks:
+    auth: "{{ ovirt_auth }}"
+    name: "{{node2_fqdn}}"
+    interface: "{{node_interface_dev_name}}"
+    networks:
+      - name: gluster
+        boot_protocol: static
+        address: "{{node2_gluster_ip}}"
+        netmask: 255.255.255.0
+    save: true
+  tags:
+    - network
+
+- name: Add gluster network to node3
+  ovirt_host_networks:
+    auth: "{{ ovirt_auth }}"
+    name: "{{node3_fqdn}}"
+    interface: "{{node_interface_dev_name}}"
+    networks:
+      - name: gluster
+        boot_protocol: static
+        address: "{{node3_gluster_ip}}"
+        netmask: 255.255.255.0
+    save: true
+  tags:
+    - network
+
+- name: Cleanup RHV auth token
+  ovirt_auth:
+    ovirt_auth: "{{ ovirt_auth }}"
+    state: absent
+  tags:
+    - network

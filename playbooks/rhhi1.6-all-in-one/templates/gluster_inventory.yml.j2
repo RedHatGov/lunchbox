@@ -1,0 +1,69 @@
+gluster_features_512B_check: false   # needed to allow installing on partitions
+
+hc_nodes:
+  hosts:
+    rhvh.rnelson-test.com:
+      gluster_infra_volume_groups:
+        - vgname: gluster_vg_nvme0n1p4
+          pvname: /dev/nvme0n1p4
+        - vgname: gluster_vg_nvme0n1p5
+          pvname: /dev/nvme0n1p5
+      gluster_infra_mount_devices:
+        - path: /gluster_bricks/engine
+          lvname: gluster_lv_engine
+          vgname: gluster_vg_nvme0n1p4
+        - path: /gluster_bricks/vmstore
+          lvname: gluster_lv_vmstore
+          vgname: gluster_vg_nvme0n1p5
+      gluster_infra_thick_lvs:
+        - vgname: gluster_vg_nvme0n1p4
+          lvname: gluster_lv_engine
+          size: 72G
+      gluster_infra_thinpools:
+        - vgname: gluster_vg_nvme0n1p5
+          thinpoolname: gluster_thinpool_gluster_vg_nvme0n1p5
+          poolmetadatasize: 3G
+      gluster_infra_lv_logicalvols:
+        - vgname: gluster_vg_nvme0n1p5
+          thinpool: gluster_thinpool_gluster_vg_nvme0n1p5
+          lvname: gluster_lv_vmstore
+          lvsize: 500G
+  vars:
+    gluster_infra_disktype: JBOD
+    gluster_set_selinux_labels: true
+    gluster_infra_fw_ports:
+      - 2049/tcp
+      - 54321/tcp
+      - 5900/tcp
+      - 5900-6923/tcp
+      - 5666/tcp
+      - 16514/tcp
+    gluster_infra_fw_permanent: true
+    gluster_infra_fw_state: enabled
+    gluster_infra_fw_zone: public
+    gluster_infra_fw_services:
+      - glusterfs
+    cluster_nodes:
+      - rhvh.rnelson-test.com
+    gluster_features_hci_cluster: '{{ cluster_nodes }}'
+    gluster_features_hci_volumes:
+      - volname: engine
+        brick: /gluster_bricks/engine/engine
+        arbiter: 0
+      - volname: vmstore
+        brick: /gluster_bricks/vmstore/vmstore
+        arbiter: 0
+    gluster_features_hci_volume_options:
+      storage.owner-uid: '36'
+      storage.owner-gid: '36'
+      features.shard: 'on'
+      performance.low-prio-threads: '32'
+      performance.strict-o-direct: 'on'
+      network.remote-dio: 'off'
+      network.ping-timeout: '30'
+      user.cifs: 'off'
+      nfs.disable: 'on'
+      performance.quick-read: 'off'
+      performance.read-ahead: 'off'
+      performance.io-cache: 'off'
+      cluster.eager-lock: enable

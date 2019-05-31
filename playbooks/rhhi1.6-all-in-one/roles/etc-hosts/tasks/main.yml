@@ -1,0 +1,7 @@
+---
+- name: Copy /etc/hosts file
+  copy:
+    src: etc-hosts
+    dest: /etc/hosts
+    mode: 0644
+  tags: etc-hosts

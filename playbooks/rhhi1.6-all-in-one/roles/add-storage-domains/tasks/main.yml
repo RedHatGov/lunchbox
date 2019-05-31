@@ -1,0 +1,40 @@
+---
+- name: Login to RHV
+  ovirt_auth:
+    url: https://{{rhvm_fqdn}}/ovirt-engine/api
+    insecure: yes
+    username: admin@internal
+    password: "{{ adminPassword }}"
+  tags: storage-domain
+
+- name: add {{storage_domain_name_2}} storage domain
+  ovirt_storage_domains:
+    auth: "{{ ovirt_auth }}"
+    name: "{{storage_domain_name_2}}"
+    host: "{{node1_fqdn}}"
+    data_center: Default
+    glusterfs:
+      address: "{{node1_gluster_fqdn}}"
+      path: /{{storage_domain_name_2}}
+      mount_options: backup-volfile-servers="{{node2_gluster_fqdn}}":"{{node3_gluster_fqdn}}"
+    state: present
+  tags: storage-domain
+
+- name: add "{{storage_domain_name_3}}" storage domain
+  ovirt_storage_domains:
+    auth: "{{ ovirt_auth }}"
+    name: "{{storage_domain_name_3}}"
+    host: "{{node1_fqdn}}"
+    data_center: Default
+    glusterfs:
+      address: "{{node1_gluster_fqdn}}"
+      path: /{{storage_domain_name_3}}
+      mount_options: backup-volfile-servers="{{node2_gluster_fqdn}}":"{{node3_gluster_fqdn}}"
+    state: present
+  tags: storage-domain
+
+- name: Cleanup RHV auth token
+  ovirt_auth:
+    ovirt_auth: "{{ ovirt_auth }}"
+    state: absent
+  tags: storage-domain

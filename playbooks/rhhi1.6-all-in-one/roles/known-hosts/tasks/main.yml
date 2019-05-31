@@ -1,0 +1,8 @@
+---
+- name: Create known_hosts
+  shell: "ssh-keyscan -t ecdsa-sha2-nistp256 {{item}} >> /root/.ssh/known_hosts"
+  with_items:
+    - "{{node1_fqdn}}"
+  delegate_to: "{{node1_fqdn}}"
+  run_once: true
+  tags: known-hosts

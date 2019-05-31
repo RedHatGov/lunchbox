@@ -1,0 +1,25 @@
+#ansible-playbook -u root main.yml -k
+# Need to update gluster_inventory, cluster_nodes, he_gluster_vars, and all
+---
+- hosts: lunchbox
+  name: Prepare system before installing RHHI
+  roles:
+    - etc-hosts
+    - hostname
+    - ssh-keys
+    - known-hosts
+    - register
+
+- hosts: lunchbox
+  name: Configure Gluster and Deploy Hosted Engine
+  roles:
+    - prep-host
+    - deploy-gluster-and-he
+
+#- hosts: localhost
+#  name: Configure RHV post deploy
+#  gather_facts: no
+#  roles:
+#    - add-hosts
+#    - add-gluster-network
+#    - add-storage-domains

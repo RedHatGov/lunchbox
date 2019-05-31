@@ -1,0 +1,4 @@
+---
+- name: Set hostname
+  command: hostnamectl set-hostname {{ node1_fqdn }}
+  tags: hostname

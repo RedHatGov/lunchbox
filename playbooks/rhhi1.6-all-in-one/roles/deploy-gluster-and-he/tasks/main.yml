@@ -1,0 +1,4 @@
+---
+- name: execute playbook on local node
+  shell: ansible-playbook -i /etc/ansible/roles/gluster.ansible/playbooks/hc-ansible-deployment/gluster_inventory.yml /etc/ansible/roles/gluster.ansible/playbooks/hc-ansible-deployment/hc_deployment.yml --extra-vars='@/etc/ansible/roles/gluster.ansible/playbooks/hc-ansible-deployment/he_gluster_vars.json'
+  tags: deploy-gluster-he
