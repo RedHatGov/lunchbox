@@ -1,0 +1,7 @@
+---
+# defaults file for custom_install_image
+custom_install_image_src_iso: []
+custom_install_image_dst_iso: []
+custom_install_image_ks_file: []
+custom_install_image_label: "custom_image"
+custom_install_image_menu_label: "Custom Image"	

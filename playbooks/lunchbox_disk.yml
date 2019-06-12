@@ -1,0 +1,15 @@
+---
+- name: Create Lunchbox Admin ISO
+  hosts: localhost
+  become: yes
+  vars:
+    custom_install_image_src_iso: /mnt/isos/rhel-server-7.6-x86_64-dvd.iso
+    custom_install_image_dst_iso: /mnt/isos/lb.iso
+    custom_install_image_ks_file: /mnt/devel/lunchbox/lunchbox-ks.cfg
+    custom_install_image_label: "lb_admin"
+    custom_install_image_menu_label: "Lunchbox Installer"
+  tasks:
+    - name: Create custom image
+      include_role:
+        name: custom_install_image
+...
