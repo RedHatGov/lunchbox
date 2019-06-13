@@ -1,0 +1,30 @@
+set default="0"
+
+function load_video {
+  insmod efi_gop
+  insmod efi_uga
+  insmod video_bochs
+  insmod video_cirrus
+  insmod all_video
+}
+
+load_video
+set gfxpayload=keep
+insmod gzio
+insmod part_gpt
+insmod ext2
+
+set timeout=60
+### END /etc/grub.d/00_header ###
+
+search --no-floppy --set=root -l '{{ custom_install_image_disk_label }}'
+
+### BEGIN /etc/grub.d/10_linux ###
+menuentry 'Install {{ custom_install_image_menu_label }}' --class fedora --class gnu-linux --class gnu --class os {
+        linuxefi /images/pxeboot/vmlinuz inst.stage2=hd:LABEL={{ custom_install_image_disk_label_esc }} inst.ks=hd:LABEL={{ custom_install_image_disk_label_esc }}:/ks.cfg text
+        initrdefi /images/pxeboot/initrd.img
+}
+menuentry 'Test this media & install {{ custom_install_image_menu_label }}' --class fedora --class gnu-linux --class gnu --class os {
+        linuxefi /images/pxeboot/vmlinuz inst.stage2=hd:LABEL={{ custom_install_image_disk_label_esc }} inst.ks=hd:LABEL={{ custom_install_image_disk_label_esc }}:/ks.cfg rd.live.check text
+        initrdefi /images/pxeboot/initrd.img
+}

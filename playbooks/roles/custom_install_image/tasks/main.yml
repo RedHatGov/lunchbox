@@ -65,41 +65,21 @@
 - name: copy ks file
   copy:
     src: "{{ custom_install_image_ks_file }}"
-    dest: "{{ custom_install_image_temp_dir.path }}/dst_files/custom-ks.cfg"
+    dest: "{{ custom_install_image_temp_dir.path }}/dst_files/ks.cfg"
 
-- name: remove troubleshooting section
-  replace: 
-    path: "{{ custom_install_image_temp_dir.path }}/dst_files/EFI/BOOT/grub.cfg"
-    regexp: "^submenu(.*\n)*"
-    replace: ""
+- name: copy grub.cfg
+  template:
+    src: files/grub.cfg.j2
+    dest: "{{ custom_install_image_temp_dir.path }}/dst_files/EFI/BOOT/grub.cfg"
 
-- name: change default selection
-  replace: 
-    path: "{{ custom_install_image_temp_dir.path }}/dst_files/EFI/BOOT/grub.cfg"
-    regexp: "^set default.*$"
-    replace: 'set default="0"'
-
-- name: replace RHEL disk label
-  replace:
-    path: "{{ custom_install_image_temp_dir.path }}/dst_files/EFI/BOOT/grub.cfg"
-    regexp: "RHEL.7\\.6(\\\\x20)?( )?Server\\.x86_64"
-    replace: "{{ custom_install_image_label }}"
-
-- name: add in kickstart references
-  replace:
-    path: "{{ custom_install_image_temp_dir.path }}/dst_files/EFI/BOOT/grub.cfg"
-    regexp: "(inst\\.[^ ]* )+"
-    replace: "inst.stage2=hd:LABEL={{ custom_install_image_label }} inst.ks=hd:LABEL={{ custom_install_image_label }}:/custom-ks.cfg "
-
-- name: replace menu label
-  replace:
-    path: "{{ custom_install_image_temp_dir.path }}/dst_files/EFI/BOOT/grub.cfg"
-    regexp: "^(menuentry.+?nstall ).+?('.*)$"
-    replace: '\1{{ custom_install_image_menu_label }}\2'
+- name: copy isolinux.cfg
+  template:
+    src: files/isolinux.cfg.j2
+    dest: "{{ custom_install_image_temp_dir.path }}/dst_files/isolinux/isolinux.cfg"
     
 - name: create dst_iso
   command: >
-    mkisofs -r -T -J -V '{{ custom_install_image_label }}' -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot 
+    mkisofs -r -T -J -V '{{ custom_install_image_disk_label }}' -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot 
     -boot-load-size 4 -boot-info-table -eltorito-alt-boot -e images/efiboot.img -no-emul-boot 
     -o {{ custom_install_image_dst_iso }} {{ custom_install_image_temp_dir.path }}/dst_files
 
