@@ -1,5 +1,6 @@
 ---
 - name: Create Lunchbox Admin ISO
+  # This playbook is more of an example. Because it is designed to run on localhost, the paths used are unique to each user
   hosts: localhost
   become: yes
   vars:
