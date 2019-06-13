@@ -1,3 +1,7 @@
+> ## Note: See the [custom_install_image](./playbooks/roles/custom_install_image) role for an automated process.  Below is the older manual process
+
+
+
 # Building a Custom ISO for the initial RHEL+KVM Utility server
 
 In order to utilize Lunchbox, you must install the base kvm image.
