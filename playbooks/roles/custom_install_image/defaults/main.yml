@@ -1,8 +1,12 @@
 ---
 # defaults file for custom_install_image
+
 custom_install_image_src_iso: []
 custom_install_image_dst_iso: []
 custom_install_image_ks_file: []
 custom_install_image_menu_label: "Custom Image"	
 custom_install_image_disk_label: "{{ custom_install_image_menu_label }}"
 custom_install_image_disk_label_esc: "{{ custom_install_image_disk_label | regex_replace(' ','\\\\x20') }}"
+custom_install_image_splash_png: "files/splash.png"
+
+...

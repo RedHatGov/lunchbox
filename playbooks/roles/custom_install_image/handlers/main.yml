@@ -1,2 +1,12 @@
 ---
 # handlers file for custom_install_image
+
+- name: unmount src_iso
+  command: "umount -R -d {{ custom_install_image_temp_dir.path }}/src_files"
+
+- name: delete temporary directory
+  file:
+    state: absent
+    path: "{{ custom_install_image_temp_dir.path }}"
+
+...

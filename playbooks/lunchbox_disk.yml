@@ -1,15 +1,18 @@
 ---
+# This playbook is more of an example. Because it is designed to run on localhost, the paths used are unique to each user
+
 - name: Create Lunchbox Admin ISO
-  # This playbook is more of an example. Because it is designed to run on localhost, the paths used are unique to each user
   hosts: localhost
   become: yes
   vars:
-    custom_install_image_src_iso: /mnt/isos/rhel-server-7.6-x86_64-dvd.iso
-    custom_install_image_dst_iso: /mnt/isos/lb.iso
-    custom_install_image_ks_file: /mnt/devel/lunchbox/lunchbox-ks.cfg
+    custom_install_image_src_iso: ~/isos/rhel-server-7.6-x86_64-dvd.iso
+    custom_install_image_dst_iso: ~/isos/lb.iso
+    custom_install_image_ks_file: ../lunchbox-ks.cfg
+    custom_install_image_splash_png: ../splash.png
     custom_install_image_menu_label: "Lunchbox Admin"
   tasks:
     - name: Create custom image
       include_role:
         name: custom_install_image
+
 ...

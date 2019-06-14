@@ -21,6 +21,7 @@ Role Variables
 | `custom_install_image_src_iso` | :heavy_check_mark: | | Fully qualified location of EL7 ISO (RHEL, Fedora, CentOS) |
 | `custom_install_image_dst_iso` | :heavy_check_mark: | | Fully qualified location to save the newly created ISO (will be overwritten if it exists) |
 | `custom_install_image_ks_file` | :heavy_check_mark: | | Fully qualified location of the custom kickstart file |
+| `custom_install_image_splash_png` | :x: | Black Screen | Image that appears behind the installer menu (must be 14-color indexed png, should be 640x480) |
 | `custom_install_image_menu_label` | :x: | ```Custom Image``` | Label that appears in the installer menu |
 | `custom_install_image_disk_label` | :x: | `{{ custom_install_image_menu_label }}` | Label that appears when the custom ISO/disk is mounted |
 
